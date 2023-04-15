@@ -95,8 +95,10 @@ def main():
                             print(move.pieceMoved + move.toChessNotation())
                             gameState.makeMove(move)
                             moveMade = True
-                        lastSqSelected = ()
-                        playerClicks = []
+                            lastSqSelected = ()
+                            playerClicks = []
+                        else:
+                            playerClicks = [lastSqSelected]
                         
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z:

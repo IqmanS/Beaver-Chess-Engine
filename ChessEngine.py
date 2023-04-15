@@ -113,13 +113,13 @@ class GameState():
                     break
  
     def getKnightMoves(self,row,col,moves):
-        me = "b" if self.whiteToMove else "w"
+        me = "w" if self.whiteToMove else "b"
         direction = [(1, 2),(2,1),(-1,2),(2,-1),(1,-2),(-2,1),(-1,-2),(-2,-1)]
         for dirn in direction:
             endRow = row + dirn[0]
             endCol = col + dirn[1]
             if 0 <= endRow <= 7 and 0 <= endCol <= 7:
-                if self.board[endRow][endCol] != me:
+                if self.board[endRow][endCol][0] != me:
                     bishopMove = GameMove(self.board, (row, col), (endRow, endCol))
                     moves.append(bishopMove)
 
@@ -145,23 +145,15 @@ class GameState():
                     break
     
     def getKingMoves(self,row,col,moves):
-        target = "b" if self.whiteToMove else "w"
+        me = "w" if self.whiteToMove else "b"
         direction = [(0,1),(1,0),(0,-1),(-1,0),(1, 1), (1, -1), (-1, 1), (-1, -1)]
-        for dirn in direction:
-            endRow = row + dirn[0]
-            endCol = col + dirn[1]
+        for i in range(len(direction)):
+            endRow = row + direction[i][0]
+            endCol = col + direction[i][1]
             if 0 <= endRow <= 7 and 0 <= endCol <= 7:
-                if self.board[endRow][endCol] == "--":
+                if self.board[endRow][endCol][0] != me:
                     kingMove = GameMove(self.board, (row, col), (endRow, endCol))
                     moves.append(kingMove)
-                elif self.board[endRow][endCol][0] == target:
-                    kingMove = GameMove(self.board, (row, col), (endRow, endCol))
-                    moves.append(kingMove)
-                    break
-                else:
-                    break
-            else:
-                break
         
     def getQueenMoves(self,row,col,moves):
         self.getRookMoves(row, col, moves)
