@@ -94,12 +94,9 @@ def main():
                         if move in validMoves:
                             print(move.pieceMoved + move.toChessNotation())
                             gameState.makeMove(move)
-                            lastSqSelected = ()
-                            playerClicks = []
                             moveMade = True
-                        else:
-                            lastSqSelected = ()
-                            playerClicks = []
+                        lastSqSelected = ()
+                        playerClicks = []
                         
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z:
