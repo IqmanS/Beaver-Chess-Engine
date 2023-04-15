@@ -72,9 +72,9 @@ def main():
         for e in p.event.get():
             if e.type == p.QUIT:
                 running = False
-            if e.type == p.MOUSEBUTTONDOWN:
-                loc = p.mouse.get_pos()
                 
+            elif e.type == p.MOUSEBUTTONDOWN:
+                loc = p.mouse.get_pos()
                 col = (loc[0] - INDENT ) // CELL_SIZE
                 row = (loc[1] - INDENT ) // CELL_SIZE
                 if col>=0 and col < DIMENSION and row >=0 and row < DIMENSION:
@@ -93,6 +93,11 @@ def main():
                         print(move.toChessNotation())
                         lastSqSelected = ()
                         playerClicks = []
+                        
+            elif e.type == p.KEYDOWN:
+                if e.key == p.K_z:
+                    gameState.undoMove()
+                    
         drawGameState(screen, gameState)
         clock.tick(MAX_FPS)
         p.display.flip()
