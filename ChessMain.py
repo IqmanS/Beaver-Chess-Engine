@@ -61,8 +61,10 @@ def main():
     clock = p.time.Clock()
     screen.fill(BG)
     gameState = GameState()
+    validMoves = gameState.getValidMoves()
+    moveMade = False
     # print(gameState.board)
-    loadImages() # ONLY ONCEEEEEEE
+    loadImages() # ONLY ONCE
     drawRanksAndFiles(screen)
     running = True
     lastSqSelected = () #(row,col)
@@ -89,14 +91,24 @@ def main():
                         move = GameMove(board=gameState.board,
                                         startSquare=playerClicks[0],
                                         endSquare=playerClicks[1])
-                        gameState.makeMove(move)
-                        print(move.toChessNotation())
-                        lastSqSelected = ()
-                        playerClicks = []
+                        if move in validMoves:
+                            print(move.pieceMoved + move.toChessNotation())
+                            gameState.makeMove(move)
+                            lastSqSelected = ()
+                            playerClicks = []
+                            moveMade = True
+                        else:
+                            lastSqSelected = ()
+                            playerClicks = []
                         
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z:
                     gameState.undoMove()
+                    moveMade = True
+                    
+        if moveMade:
+            validMoves = gameState.getValidMoves()
+            moveMade = False
                     
         drawGameState(screen, gameState)
         clock.tick(MAX_FPS)
