@@ -94,85 +94,35 @@ class GameState():
     
     def getRookMoves(self,row,col,moves):
         target = "b" if self.whiteToMove else "w"
-        #DOWN
-        for i in range(row+1,8):
-            if self.board[i][col] == "--":
-                rookDown = GameMove(self.board,(row,col),(i,col))
-                moves.append(rookDown)
-            elif self.board[i][col][0] == target:
-                rookDown = GameMove(self.board,(row,col),(i,col))
-                moves.append(rookDown)
-                break
-            else:
-                break
-        #UP
-        for i in range(row-1,-1,-1):
-            if self.board[i][col] == "--":
-                rookUp = GameMove(self.board,(row,col),(i,col))
-                moves.append(rookUp)
-            elif self.board[i][col][0] == target:
-                rookUp = GameMove(self.board,(row,col),(i,col))
-                moves.append(rookUp)
-                break
-            else:
-                break
-        #LEFT
-        for i in range(col-1,-1,-1):
-            if self.board[row][i] == "--":
-                rookLeft = GameMove(self.board,(row,col),(row,i))
-                moves.append(rookLeft)
-            elif self.board[row][i][0] == target:
-                rookLeft = GameMove(self.board,(row,col),(row,i))
-                moves.append(rookLeft)
-                break
-            else:
-                break
-        #RIGHT
-        for i in range(col+1,8):
-            if self.board[row][i] == "--":
-                rookRight = GameMove(self.board,(row,col),(row,i))
-                moves.append(rookRight)
-            elif self.board[row][i][0] == target:
-                rookRight = GameMove(self.board,(row,col),(row,i))
-                moves.append(rookRight)
-                break
-            else:
-                break
+        direction = [(1, 0), (0, -1), (0, 1), (-1, 0)]
+        for dirn in direction:
+            for i in range(1, 8):
+                endRow = row + dirn[0] * i
+                endCol = col + dirn[1] * i
+                if 0 <= endRow <= 7 and 0 <= endCol <= 7:
+                    if self.board[endRow][endCol] == "--":
+                        rookMove = GameMove(self.board, (row, col), (endRow, endCol))
+                        moves.append(rookMove)
+                    elif self.board[endRow][endCol][0] == target:
+                        rookMove = GameMove(self.board, (row, col), (endRow, endCol))
+                        moves.append(rookMove)
+                        break
+                    else:
+                        break
+                else:
+                    break
  
     def getKnightMoves(self,row,col,moves):
         me = "b" if self.whiteToMove else "w"
-        # case 1 : self.board[row + 1][ col + 2]
-        if row + 1<=7 and col +2<=7 and self.board[row + 1][col + 2] != me:
-            knightCase1 = GameMove(self.board,(row,col),(row + 1,col + 2))
-            moves.append(knightCase1)
-        # case 2 : self.board[row + 1][col - 2]
-        if row + 1<=7 and col -2>=0 and self.board[row + 1][col - 2] !=me:
-            knightCase2 = GameMove(self.board,(row,col),(row + 1,col - 2))
-            moves.append(knightCase2)
-        # case 3 : self.board[row - 1][col + 2]
-        if row - 1>=0 and col +2<=7 and self.board[row - 1][col + 2] !=me:
-            knightCase3 = GameMove(self.board,(row,col),(row - 1,col + 2))
-            moves.append(knightCase3)
-        # case 4 : self.board[row - 1][col - 2]
-        if row - 1>=0 and col -2>=0 and self.board[row - 1][col - 2] !=me:
-            knightCase4 = GameMove(self.board,(row,col),(row - 1,col - 2))
-            moves.append(knightCase4)
-        # case 5 : self.board[row + 2][col + 1]
-        if row + 2<=7 and col +1<=7 and self.board[row + 2][col + 1] !=me:
-            knightCase5 = GameMove(self.board,(row,col),(row + 2,col + 1))
-            moves.append(knightCase5)
-        # case 6 : self.board[row + 2][col - 1]
-        if row + 2<=7 and col -1>=0 and self.board[row + 2][col - 1] !=me:
-            knightCase6 = GameMove(self.board,(row,col),(row + 2,col - 1))
-            moves.append(knightCase6)
-        # case 7 : self.board[row - 2][col + 1]
-        if row -2 >=0 and col +1<=7  and self.board[row - 2][col + 1] !=me:
-            knightCase7 = GameMove(self.board,(row,col),(row - 2,col + 1))
-            moves.append(knightCase7)
-        # case 8 : self.board[row - 2][col - 1]
-        if row -2 >=0 and col -1>=0 and self.board[row - 2][col - 1] !=me:
-            knightCase8 = GameMove(self.board,(row,col),(row - 2,col - 1))
-            moves.append(knightCase8)
+        direction = [(1, 2),(2,1),(-1,2),(2,-1),(1,-2),(-2,1),(-1,-2),(-2,-1)]
+        for dirn in direction:
+            endRow = row + dirn[0]
+            endCol = col + dirn[1]
+            if 0 <= endRow <= 7 and 0 <= endCol <= 7:
+                if self.board[endRow][endCol] != me:
+                    bishopMove = GameMove(self.board, (row, col), (endRow, endCol))
+                    moves.append(bishopMove)
+
     
     def getBishopMoves(self,row,col,moves):
         target = "b" if self.whiteToMove else "w"
