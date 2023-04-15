@@ -11,6 +11,8 @@ MAX_FPS = 15
 IMAGES = {}
 GREY = (119, 132, 102)
 WHITE =  (189, 196, 180)
+BG = (60, 70, 50)
+INDENT = 12
 
 #should be called only once
 def loadImages():
@@ -22,30 +24,26 @@ def loadImages():
     
 # GUI
 def drawGameState(screen,gameState):
-    drawBoard(screen)       #draw cells
-    drawPieces(screen,gameState) #draw images
+    drawBoardAndPieces(screen,gameState)       #draw cells & pieces
 
-def drawBoard(screen):
+def drawBoardAndPieces(screen,gameState):
     for i in range(DIMENSION):
         for j in range(DIMENSION):
             color = WHITE if (i+j)%2==0 else GREY
-            x = i * CELL_SIZE
-            y = j * CELL_SIZE
+            x = j * CELL_SIZE + INDENT
+            y = i * CELL_SIZE + INDENT
             square =p.Rect(x,y,CELL_SIZE,CELL_SIZE)
             p.draw.rect(screen,color,square,width=CELL_SIZE)
-
-def drawPieces(screen,gameState):
-    for i in range(DIMENSION):
-        for j in range(DIMENSION):
             piece = gameState.board[i][j]
             if piece!="--":
-                x = j * CELL_SIZE
-                y = i * CELL_SIZE
+                x = j * CELL_SIZE + INDENT
+                y = i * CELL_SIZE + INDENT
                 screen.blit(IMAGES[piece],(x,y))
+
 def main():
-    screen = p.display.set_mode((WIDTH,HEIGHT))
+    screen = p.display.set_mode((WIDTH+ 2* INDENT,HEIGHT + INDENT *2 ))
     clock = p.time.Clock()
-    screen.fill(p.Color("white"))
+    screen.fill(BG)
     gameState = GameState()
     print(gameState.board)
     loadImages() # ONLY ONCEEEEEEE
