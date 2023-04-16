@@ -4,17 +4,19 @@ class GameState():
     def __init__(self):
         # 8X8 2D MATRIX
         self.board = np.array([
-            ["bR", "bN", "bB", "bK", "bQ", "bB", "bN", "bR"],
+            ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
             ["bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP"],
             ["--", "--", "--", "--", "--", "--", "--", "--"], #empty
             ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["--", "--", "--", "wK", "--", "wQ", "--", "--"],
+            ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["wP", "wP", "wP", "wP", "wP", "wP", "wP", "wP"],
-            ["wR", "wN", "wB", "wK", "wQ", "wB", "wN", "wR"],
+            ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"],
         ])
         self.whiteToMove = True
         self.moveLog = []
+        self.whiteKingLoc = (7,4)
+        self.blackKingLoc = (0,4)
         
     def makeMove(self,gameMove): # Not works for castling, en passant and pawn promotion
         self.board[gameMove.startRow][gameMove.startCol] = "--"
@@ -22,6 +24,10 @@ class GameState():
         self.moveLog.append(gameMove)
         #swap player turns
         self.whiteToMove = not self.whiteToMove
+        if gameMove.pieceMoved == "wK":
+            self.whiteKingLoc = (gameMove.endRow,gameMove.endCol)
+        elif gameMove.pieceMoved == "bK":
+            self.blackKingLoc = (gameMove.endRow,gameMove.endCol)
         
     def undoMove(self):
         if len(self.moveLog)!=0:
@@ -29,6 +35,10 @@ class GameState():
             self.board[lastMove.startRow][lastMove.startCol] = lastMove.pieceMoved
             self.board[lastMove.endRow][lastMove.endCol] = lastMove.pieceCaptured
             self.whiteToMove = not self.whiteToMove
+            if lastMove.pieceMoved == "wK":
+                self.whiteKingLoc = (lastMove.startRow, lastMove.startCol)
+            elif lastMove.pieceMoved == "bK":
+                self.blackKingLoc = (lastMove.startRow, lastMove.startCol)
             
     def getValidMoves(self): #All moves without checks subset of POSSIBLE MOVES
         return self.getAllPossibleMoves()

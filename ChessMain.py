@@ -8,12 +8,14 @@ from ChessEngine import *
 p.init()
 p.display.set_caption('Beaver')
 FONT = p.font.Font('freesansbold.ttf', 10)
+HEADING = p.font.Font('freesansbold.ttf', 32)
 WIDTH = HEIGHT = 512
 DIMENSION = 8
 CELL_SIZE = HEIGHT// DIMENSION
 MAX_FPS = 15
 IMAGES = {}
 GREY = (119, 132, 102)
+HEADINGCOL = (209, 216, 200)
 WHITE =  (189, 196, 180)
 BG = (60, 70, 50)
 INDENT = 18
@@ -31,6 +33,10 @@ def drawGameState(screen,gameState):
     drawBoardAndPieces(screen,gameState)       #draw cells & pieces
 
 def drawRanksAndFiles(screen):
+    title = "BEAVER CHESS ENGINE"
+    titleBox = HEADING.render(title,True,HEADINGCOL)
+    titleBox.get_width()
+    screen.blit(titleBox, (WIDTH *1.1+ (2*INDENT), CELL_SIZE ))
     for i in range(DIMENSION):
         rank = str(DIMENSION-i)
         rankBox = FONT.render(rank, True, WHITE)
@@ -40,6 +46,8 @@ def drawRanksAndFiles(screen):
         file = files[DIMENSION-j-1]
         fileBox = FONT.render(file, True, WHITE)
         screen.blit(fileBox, (j*CELL_SIZE + INDENT +CELL_SIZE//2,HEIGHT+ INDENT+INDENT//4))
+        
+        
 
 
 def drawBoardAndPieces(screen,gameState):
@@ -57,7 +65,7 @@ def drawBoardAndPieces(screen,gameState):
                 screen.blit(IMAGES[piece],(x,y))
 
 def main():
-    screen = p.display.set_mode((WIDTH+ 2* INDENT,HEIGHT + INDENT *2 ))
+    screen = p.display.set_mode((WIDTH*2+ 2* INDENT,HEIGHT + INDENT *2 ))
     clock = p.time.Clock()
     screen.fill(BG)
     gameState = GameState()
