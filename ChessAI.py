@@ -36,10 +36,40 @@ def GreedyAI(gameState,validMoves):
         if gameState.checkmate:
             bestScore = turnSign * CHECKMATE
         elif gameState.stalemate:
-            bestScore = turnSign * STALEMATE
+            bestScore = STALEMATE
         score = turnSign * ScoreBoard(gameState.board)
         if (score > bestScore):
             bestScore = score
             bestMove = aiMove
         gameState.undoMove()
     return bestMove
+
+def MinMaxAI(gameState,validMoves):
+    turnSign = 1 if gameState.whiteToMove else -1
+    MinMaxScore = CHECKMATE  # init the worst possible score
+    bestAIMove = None
+    random.shuffle(validMoves)
+    for aiMove in validMoves:
+        gameState.makeMove(aiMove)
+        # FIND OPPONENTS MAX SCORE
+        oppMoves = gameState.getValidMoves()
+        oppMaxScore = -CHECKMATE
+        for oppMove in oppMoves:
+            gameState.makeMove(oppMove)
+            if gameState.checkmate:
+                score = -turnSign * CHECKMATE
+            elif gameState.stalemate:
+                score = STALEMATE
+            else:
+                score = -turnSign * ScoreBoard(gameState.board)
+            if (score > oppMaxScore):
+                oppMaxScore = score
+            gameState.undoMove()
+            
+        # FIND YOUR MIN SCORE
+        if oppMaxScore < MinMaxScore:
+            MinMaxScore = oppMaxScore
+            bestAIMove = aiMove
+        gameState.undoMove()
+    return bestAIMove
+    

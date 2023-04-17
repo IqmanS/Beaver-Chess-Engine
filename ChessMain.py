@@ -156,7 +156,7 @@ def main():
                     
         #AI MOVES
         if not gameOver and not humanTurn:
-            AIMove = GreedyAI(gameState,validMoves)
+            AIMove = MinMaxAI(gameState,validMoves)
             if AIMove is None:
                 AIMove = RandomAI(validMoves)
             gameState.makeMove(AIMove)
