@@ -19,6 +19,8 @@ HEADINGCOL = (209, 216, 200)
 WHITE =  (189, 196, 180)
 BG = (60, 70, 50)
 INDENT = 18
+HIGHLIGHT1 = (101, 88, 60)
+HIGHLIGHT2 = (251, 225, 132)
 
 #should be called only once
 def loadImages():
@@ -29,8 +31,9 @@ def loadImages():
         #now we can access the IMAGES dictionary
     
 # GUI
-def drawGameState(screen,gameState):
+def drawGameState(screen,gameState,validMoves,sqSelected):
     drawBoardAndPieces(screen,gameState)       #draw cells & pieces
+    highlightCells(screen, gameState, validMoves, sqSelected)
 
 def drawRanksAndFiles(screen):
     title = "BEAVER CHESS ENGINE"
@@ -61,6 +64,27 @@ def drawBoardAndPieces(screen,gameState):
                 x = j * CELL_SIZE + INDENT
                 y = i * CELL_SIZE + INDENT
                 screen.blit(IMAGES[piece],(x,y))
+                
+def highlightCells(screen,gameState,validMoves,sqSelected): #Highlights the moves
+    if sqSelected !=():
+        row,col = sqSelected
+        me = "w" if gameState.whiteToMove else "b"
+        if gameState.board[row][col][0] == me:
+            #highlight selected square
+            sq = p.Surface((CELL_SIZE,CELL_SIZE))
+            sq.set_alpha(70)
+            sq.fill(HIGHLIGHT1)
+            x = col * CELL_SIZE + INDENT
+            y = row * CELL_SIZE + INDENT
+            screen.blit(sq,(x,y))
+            # Highlight moves
+            for move in validMoves:
+                if move.startRow == row and move.startCol == col:
+                    sq.set_alpha(120)
+                    sq.fill(HIGHLIGHT2)
+                    x = move.endCol * CELL_SIZE + INDENT
+                    y = move.endRow * CELL_SIZE + INDENT
+                    screen.blit(sq, (x, y))
 
 def main():
     screen = p.display.set_mode((WIDTH*2+ 2* INDENT,HEIGHT + INDENT *2 ))
@@ -115,7 +139,7 @@ def main():
             validMoves = gameState.getValidMoves()
             moveMade = False
                     
-        drawGameState(screen, gameState)
+        drawGameState(screen, gameState,validMoves,sqSelected=lastSqSelected)
         clock.tick(MAX_FPS)
         p.display.flip()
         
