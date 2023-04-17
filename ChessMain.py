@@ -147,12 +147,15 @@ def main():
                 if e.key == p.K_z:
                     gameState.undoMove()
                     moveMade = True
+                    gameOver = False
+                    
                 elif e.key == p.K_r:
                     gameState = GameState()
                     validMoves = gameState.getValidMoves()
                     lastSqSelected = ()
                     playerClicks = []
                     moveMade = False
+                    gameOver = False
                     
         #AI MOVES
         if not gameOver and not humanTurn:

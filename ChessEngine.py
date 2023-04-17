@@ -41,6 +41,8 @@ class GameState():
                 self.whiteKingLoc = (lastMove.startRow, lastMove.startCol)
             elif lastMove.pieceMoved == "bK":
                 self.blackKingLoc = (lastMove.startRow, lastMove.startCol)
+            self.checkmate = False
+            self.stalemate = False
 
     def cellUnderAttack(self,row,col):
         self.whiteToMove = not self.whiteToMove
