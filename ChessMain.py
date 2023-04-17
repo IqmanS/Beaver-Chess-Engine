@@ -4,23 +4,29 @@
 import pygame as p
 import numpy as np
 from ChessEngine import *
+from ChessAI import *
 
 p.init()
 p.display.set_caption('Beaver')
 FONT = p.font.Font('freesansbold.ttf', 10)
 HEADING = p.font.Font('freesansbold.ttf', 32)
+GAMEEND = p.font.Font('freesansbold.ttf', 25)
 WIDTH = HEIGHT = 512
 DIMENSION = 8
 CELL_SIZE = HEIGHT// DIMENSION
 MAX_FPS = 15
 IMAGES = {}
 GREY = (119, 132, 102)
+DARKGREY = (47, 54, 38)
 HEADINGCOL = (209, 216, 200)
 WHITE =  (189, 196, 180)
 BG = (60, 70, 50)
 INDENT = 18
 HIGHLIGHT1 = (101, 88, 60)
 HIGHLIGHT2 = (251, 225, 132)
+HumanVsHuman = False
+HumanVsComputer = True
+ComputerVsComputer = False
 
 #should be called only once
 def loadImages():
@@ -72,7 +78,7 @@ def highlightCells(screen,gameState,validMoves,sqSelected): #Highlights the move
         if gameState.board[row][col][0] == me:
             #highlight selected square
             sq = p.Surface((CELL_SIZE,CELL_SIZE))
-            sq.set_alpha(70)
+            sq.set_alpha(50)
             sq.fill(HIGHLIGHT1)
             x = col * CELL_SIZE + INDENT
             y = row * CELL_SIZE + INDENT
@@ -85,6 +91,11 @@ def highlightCells(screen,gameState,validMoves,sqSelected): #Highlights the move
                     x = move.endCol * CELL_SIZE + INDENT
                     y = move.endRow * CELL_SIZE + INDENT
                     screen.blit(sq, (x, y))
+                    
+def drawText(screen,text):
+    textBox = GAMEEND.render(text,True,DARKGREY)
+    textLoc = p.Rect(0,0,WIDTH,HEIGHT).move(WIDTH/2 - textBox.get_width()/2,HEIGHT/2 - textBox.get_height()/2)
+    screen.blit(textBox,textLoc)
 
 def main():
     screen = p.display.set_mode((WIDTH*2+ 2* INDENT,HEIGHT + INDENT *2 ))
@@ -93,53 +104,83 @@ def main():
     gameState = GameState()
     validMoves = gameState.getValidMoves()
     moveMade = False
-    # print(gameState.board)
     loadImages() # ONLY ONCE
     drawRanksAndFiles(screen)
     running = True
     lastSqSelected = () #(row,col)
     playerClicks = [] #(6,4) -> (4,4)
+    gameOver = False
     while running:
-        
+        # humanTurn = gameState.whiteToMove if HumanVsComputer else False
+        humanTurn = False if ComputerVsComputer else gameState.whiteToMove if HumanVsComputer else False
+            
         for e in p.event.get():
             if e.type == p.QUIT:
                 running = False
                 
             elif e.type == p.MOUSEBUTTONDOWN:
-                loc = p.mouse.get_pos()
-                col = (loc[0] - INDENT ) // CELL_SIZE
-                row = (loc[1] - INDENT ) // CELL_SIZE
-                if col>=0 and col < DIMENSION and row >=0 and row < DIMENSION:
-                    if (row,col) == lastSqSelected:
-                        lastSqSelected = ()
-                        playerClicks = []
-                    else:
-                        lastSqSelected = (row,col)
-                        playerClicks.append(lastSqSelected)
-                    if len(playerClicks)==2:
-                        # print(playerClicks)
-                        move = GameMove(board=gameState.board,
-                                        startSquare=playerClicks[0],
-                                        endSquare=playerClicks[1])
-                        if move in validMoves:
-                            print(move.pieceMoved + move.toChessNotation())
-                            gameState.makeMove(move)
-                            moveMade = True
+                if not gameOver and humanTurn:
+                    loc = p.mouse.get_pos()
+                    col = (loc[0] - INDENT ) // CELL_SIZE
+                    row = (loc[1] - INDENT ) // CELL_SIZE
+                    if col>=0 and col < DIMENSION and row >=0 and row < DIMENSION:
+                        if (row,col) == lastSqSelected:
                             lastSqSelected = ()
                             playerClicks = []
                         else:
-                            playerClicks = [lastSqSelected]
+                            lastSqSelected = (row,col)
+                            playerClicks.append(lastSqSelected)
+                        if len(playerClicks)==2:
+                            move = GameMove(board=gameState.board,
+                                            startSquare=playerClicks[0],
+                                            endSquare=playerClicks[1])
+                            if move in validMoves:
+                                print(move.pieceMoved + move.toChessNotation())
+                                gameState.makeMove(move)
+                                moveMade = True
+                                lastSqSelected = ()
+                                playerClicks = []
+                            else:
+                                playerClicks = [lastSqSelected]
                         
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z:
                     gameState.undoMove()
                     moveMade = True
+                elif e.key == p.K_r:
+                    gameState = GameState()
+                    validMoves = gameState.getValidMoves()
+                    lastSqSelected = ()
+                    playerClicks = []
+                    moveMade = False
                     
+        #AI MOVES
+        if not gameOver and not humanTurn:
+            AIMove = GreedyAI(gameState,validMoves)
+            if AIMove is None:
+                AIMove = RandomAI(validMoves)
+            gameState.makeMove(AIMove)
+            moveMade = True
+        
         if moveMade:
             validMoves = gameState.getValidMoves()
             moveMade = False
                     
         drawGameState(screen, gameState,validMoves,sqSelected=lastSqSelected)
+        
+        if gameState.checkmate:
+            gameOver = True
+            if gameState.whiteToMove:
+                text = "BLACK WON"
+                drawText(screen,text)
+            else:
+                text = "WHITE WON"
+                drawText(screen,text)
+        elif gameState.stalemate:
+            gameOver = True
+            text = "STALEMATE"
+            drawText(screen,text)
+            
         clock.tick(MAX_FPS)
         p.display.flip()
         
