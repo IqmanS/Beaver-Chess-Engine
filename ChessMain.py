@@ -48,8 +48,6 @@ def drawRanksAndFiles(screen):
         screen.blit(fileBox, (j*CELL_SIZE + INDENT +CELL_SIZE//2,HEIGHT+ INDENT+INDENT//4))
         
         
-
-
 def drawBoardAndPieces(screen,gameState):
     for i in range(DIMENSION):
         for j in range(DIMENSION):

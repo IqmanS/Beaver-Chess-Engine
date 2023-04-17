@@ -17,6 +17,8 @@ class GameState():
         self.moveLog = []
         self.whiteKingLoc = (7,4)
         self.blackKingLoc = (0,4)
+        self.checkmate = False
+        self.stalemate = False
         
     def makeMove(self,gameMove): # Not works for castling, en passant and pawn promotion
         self.board[gameMove.startRow][gameMove.startCol] = "--"
@@ -39,9 +41,47 @@ class GameState():
                 self.whiteKingLoc = (lastMove.startRow, lastMove.startCol)
             elif lastMove.pieceMoved == "bK":
                 self.blackKingLoc = (lastMove.startRow, lastMove.startCol)
-            
+
+    def cellUnderAttack(self,row,col):
+        self.whiteToMove = not self.whiteToMove
+        oppMoves = self.getAllPossibleMoves()
+        self.whiteToMove = not self.whiteToMove
+        for move in oppMoves:
+            if move.endRow == row and move.endCol == col:
+                return True
+        return False
+
+    def inCheck(self):
+        if self.whiteToMove:
+            return self.cellUnderAttack(self.whiteKingLoc[0],self.whiteKingLoc[1])
+        else:
+            return self.cellUnderAttack(self.blackKingLoc[0],self.blackKingLoc[1])
+        
     def getValidMoves(self): #All moves without checks subset of POSSIBLE MOVES
-        return self.getAllPossibleMoves()
+        # 1. Generate All Possible Moves
+        moves  = self.getAllPossibleMoves()
+        # 2. For each move make the move
+        for i in range(len(moves)-1,-1,-1): #Removing from a list always try to traverse it backward
+            self.makeMove(moves[i])
+            # 3. Generate all the Opponent's Move
+            # 4. For each of the Opponent's Move, see if check on your KING
+            self.whiteToMove = not self.whiteToMove
+            if self.inCheck():
+                # 5. Remove that move from Valid Moves
+                moves.remove(moves[i])
+            self.whiteToMove = not self.whiteToMove
+            self.undoMove()
+        
+        if(len(moves) == 0):
+            if self.inCheck():
+                self.checkmate  = True
+            else:
+                self.stalemate  = True
+        else:
+            self.checkmate = False
+            self.stalemate = False
+            
+        return moves
     
     def getAllPossibleMoves(self): #All moves with checks
         moves = []
