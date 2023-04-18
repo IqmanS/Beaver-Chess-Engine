@@ -1,4 +1,5 @@
 import random
+import numpy as np
 # White Winning +ve Value
 # Black Winning -ve Value
 pieceScore  = {
@@ -12,6 +13,83 @@ pieceScore  = {
 CHECKMATE = 1000
 STALEMATE = 0
 DEPTH = 2
+TRANSPOSITIONAL_WEIGHT = 0.2
+
+#TRANSPOSITIONAL TABLES RANGE(1-4) NEEEEDDD TO BE TUNED
+KTable = np.array  ([                                       #transpositional table for king
+                        [3 , 3 , 2 , 1 , 1 , 2 , 3 , 3],
+                        [2 , 2 , 1 , 1 , 1 , 1 , 2 , 2],
+                        [1 , 0 , 0 , 0 , 0 , 0 , 0 , 1],
+                        [0 , 0 , 0 , 0 , 0 , 0 , 0 , 0],
+                        [0 , 0 , 0 , 0 , 0 , 0 , 0 , 0],
+                        [1 , 0 , 0 , 0 , 0 , 0 , 0 , 1],
+                        [2 , 2 , 1 , 1 , 1 , 1 , 2 , 2],
+                        [3 , 3 , 2 , 1 , 1 , 2 , 3 , 3],
+                        ])
+
+QTable = np.array  ([                                       #transpositional table for queen
+                        [0 , 1 , 1 , 1 , 1 , 1 , 1 , 0],
+                        [1 , 2 , 2 , 2 , 2 , 2 , 2 , 1],
+                        [1 , 3 , 3 , 3 , 3 , 3 , 2 , 1],
+                        [2 , 2 , 3 , 3 , 3 , 3 , 2 , 1],
+                        [1 , 2 , 3 , 3 , 3 , 3 , 2 , 1],
+                        [1 , 2 , 3 , 3 , 3 , 3 , 2 , 1],
+                        [1 , 2 , 2 , 2 , 2 , 2 , 2 , 1],
+                        [0 , 1 , 1 , 1 , 1 , 1 , 1 , 0],
+                        ])
+
+RTable = np.array  ([                                       #transpositional table for rook
+                        [1 , 0 , 1 , 1 , 1 , 1 , 0 , 1],
+                        [1 , 4 , 4 , 4 , 4 , 4 , 4 , 1],
+                        [1 , 2 , 3 , 3 , 3 , 3 , 2 , 1],
+                        [1 , 2 , 3 , 3 , 3 , 3 , 2 , 1],
+                        [1 , 2 , 3 , 3 , 3 , 3 , 2 , 1],
+                        [1 , 2 , 3 , 3 , 3 , 3 , 2 , 1],
+                        [1 , 4 , 4 , 4 , 4 , 4 , 4 , 1],
+                        [1 , 0 , 1 , 1 , 1 , 1 , 0 , 1],
+                        ])
+
+BTable = np.array  ([                                       #transpositional table for bishop
+                        [0 , 1 , 1 , 1 , 1 , 1 , 1 , 0],
+                        [1 , 3 , 2 , 2 , 2 , 2 , 3 , 1],
+                        [1 , 4 , 4 , 4 , 4 , 4 , 4 , 1],
+                        [1 , 2 , 3 , 4 , 4 , 3 , 2 , 1],
+                        [1 , 2 , 3 , 4 , 4 , 3 , 2 , 1],
+                        [1 , 2 , 4 , 4 , 4 , 4 , 2 , 1],
+                        [1 , 3 , 2 , 2 , 2 , 2 , 3 , 1],
+                        [0 , 1 , 1 , 1 , 1 , 1 , 1 , 0],
+                        ])
+
+NTable = np.array  ([                                       #transpositional table for knight
+                        [0 , 1 , 1 , 1 , 1 , 1 , 1 , 0],
+                        [1 , 2 , 2 , 2 , 2 , 2 , 2 , 1],
+                        [1 , 2 , 3 , 3 , 3 , 3 , 2 , 1],
+                        [1 , 2 , 3 , 4 , 4 , 3 , 2 , 1],
+                        [1 , 2 , 3 , 4 , 4 , 3 , 2 , 1],
+                        [1 , 2 , 3 , 3 , 3 , 3 , 2 , 1],
+                        [1 , 2 , 2 , 2 , 2 , 2 , 2 , 1],
+                        [0 , 1 , 1 , 1 , 1 , 1 , 1 , 0],
+                        ])
+PTable = np.array  ([                                       #transpositional table for pawn
+                        [1 , 1 , 1 , 1 , 1 , 1 , 1 , 1],
+                        [1 , 2 , 2 , 1 , 1 , 2 , 2 , 1],
+                        [1 , 2 , 3 , 3 , 3 , 3 , 2 , 1],
+                        [1 , 2 , 3 , 4 , 4 , 3 , 2 , 1],
+                        [1 , 2 , 3 , 4 , 4 , 3 , 2 , 1],
+                        [1 , 2 , 3 , 3 , 3 , 3 , 2 , 1],
+                        [1 , 2 , 2 , 1 , 1 , 2 , 2 , 1],
+                        [1 , 1 , 1 , 1 , 1 , 1 , 1 , 1],
+                        ])
+
+transpositionalTableMap = {
+    "K": KTable,
+    "Q": QTable,
+    "R": RTable,
+    "B": BTable,
+    "N": NTable,
+    "P": PTable
+}
+
 
 def RandomAI(validMoves):
     return random.choice(validMoves)
@@ -20,10 +98,10 @@ def ScoreMaterial(board):
     score = 0
     for row in board:
         for ele in row:
-            if ele[0]=="w":
-                score+= pieceScore[ele[1]]
-            elif ele[0]=="b":
-                score-= pieceScore[ele[1]]
+            if ele[0] == "w":
+                score += pieceScore[ele[1]]
+            elif ele[0] == "b":
+                score -= pieceScore[ele[1]]
     return score
 
 def ScoreBoard(gameState):
@@ -35,12 +113,16 @@ def ScoreBoard(gameState):
     elif gameState.stalemate:
         return STALEMATE        #score 0
     score = 0
-    for row in gameState.board:
-        for ele in row:
-            if ele[0] == "w":
-                score += pieceScore[ele[1]]
-            elif ele[0] == "b":
-                score -= pieceScore[ele[1]]
+    for row in range(len(gameState.board)):
+        for col in range(len(gameState.board[0])):
+            piece = gameState.board[row][col]
+            if piece !="--":
+                #transpositional score
+                positionScore = TRANSPOSITIONAL_WEIGHT * transpositionalTableMap[piece[1]][row][col]
+                if piece[0]=="w":
+                    score+= pieceScore[piece[1]] + positionScore
+                elif piece[0]=="b":
+                    score-= pieceScore[piece[1]] + positionScore
     return score
 
 def GreedyAI(gameState,validMoves):
