@@ -17,7 +17,7 @@ CELL_SIZE = HEIGHT// DIMENSION
 MAX_FPS = 15
 IMAGES = {}
 GREY = (119, 132, 102)
-DARKGREY = (47, 54, 38)
+DARKGREY = (37, 44, 28)
 HEADINGCOL = (209, 216, 200)
 WHITE =  (189, 196, 180)
 BG = (60, 70, 50)
@@ -96,6 +96,15 @@ def drawText(screen,text):
     textBox = GAMEEND.render(text,True,DARKGREY)
     textLoc = p.Rect(0,0,WIDTH,HEIGHT).move(WIDTH/2 - textBox.get_width()/2,HEIGHT/2 - textBox.get_height()/2)
     screen.blit(textBox,textLoc)
+    
+def drawScoreMeter(screen,score):
+    p.draw.rect(screen, DARKGREY, p.Rect(WIDTH + 2 * INDENT, INDENT *2 , 46, HEIGHT - 2*INDENT))
+    if score > 0:
+        score = min(score, 35)
+        p.draw.rect(screen, WHITE, p.Rect(WIDTH + 2 * INDENT +3, (HEIGHT + INDENT * 2)//2, 40, (HEIGHT - 2 * INDENT)*score/35))
+    else:
+        score = max(score, -20)
+        p.draw.rect(screen, GREY,p.Rect(WIDTH + 2 * INDENT +3, ((HEIGHT + INDENT * 2)// 2)-(HEIGHT - 2 * INDENT) * -score / 35 , 40, (HEIGHT - 2 * INDENT) * -score / 35))
 
 def main():
     screen = p.display.set_mode((WIDTH*2+ 2* INDENT,HEIGHT + INDENT *2 ))
@@ -159,7 +168,7 @@ def main():
                     
         #AI MOVES
         if not gameOver and not humanTurn:
-            AIMove = NegaMaxAI(gameState,validMoves)
+            AIMove = AlphaBetaPruningAI(gameState,validMoves)
             if AIMove is None:
                 AIMove = RandomAI(validMoves)
             gameState.makeMove(AIMove)
@@ -170,6 +179,7 @@ def main():
             moveMade = False
                     
         drawGameState(screen, gameState,validMoves,sqSelected=lastSqSelected)
+        drawScoreMeter(screen,ScoreBoard(gameState))
         
         if gameState.checkmate:
             gameOver = True
@@ -183,6 +193,7 @@ def main():
             gameOver = True
             text = "STALEMATE"
             drawText(screen,text)
+            
             
         clock.tick(MAX_FPS)
         p.display.flip()
