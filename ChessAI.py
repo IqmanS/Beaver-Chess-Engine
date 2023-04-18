@@ -2,12 +2,12 @@ import random
 # White Winning +ve Value
 # Black Winning -ve Value
 pieceScore  = {
-    "K":0,
-    "Q":9,
-    "R":5,
-    "B":3,
-    "N":3,
-    "P":1
+    "K": 0,
+    "Q": 9,
+    "R": 5,
+    "B": 3,
+    "N": 3,
+    "P": 1
 }
 CHECKMATE = 1000
 STALEMATE = 0
@@ -129,17 +129,20 @@ def RecursiveMinMax(gameState,validMoves,depth,whiteToMove):
         return minScore
         
 def NegaMaxAI(gameState,validMoves):
-    global nextMove
+    global nextMove, counter
     nextMove = None
     random.shuffle(validMoves)
+    # counter =0
     RecursiveNegaMax(gameState, validMoves, DEPTH, (1 if gameState.whiteToMove else -1))
+    # print(counter)
     return nextMove
 
 def RecursiveNegaMax(gameState,validMoves,depth,turnMultiplier):
-    global nextMove
+    global nextMove, counter
+    # counter +=1
     if depth == 0:
         return turnMultiplier * ScoreBoard(gameState)
-    maxScore = -CHECKMATE # init with worst possible value
+    maxScore = -CHECKMATE # init with the worst possible value
     for move in validMoves:
         gameState.makeMove(move)
         nextMoves = gameState.getValidMoves()
@@ -152,15 +155,18 @@ def RecursiveNegaMax(gameState,validMoves,depth,turnMultiplier):
     return maxScore
 
 def AlphaBetaPruningAI(gameState,validMoves):
-    global nextMove
+    global nextMove, counter
     nextMove = None
     random.shuffle(validMoves)
+    # counter = 0
     RecursiveAlphaBetaPruning(gameState, validMoves,DEPTH,-CHECKMATE,CHECKMATE, (1 if gameState.whiteToMove else -1))
+    # print(counter)
     return nextMove
 
 def RecursiveAlphaBetaPruning(gameState,validMoves,depth,alpha,beta,turnMultiplier):
     #alpha is max rn and beta is min score rn
-    global nextMove
+    global nextMove, counter
+    # counter +=1
     if depth == 0:
         return turnMultiplier * ScoreBoard(gameState)
     # order moves - implement later for better efficiency
