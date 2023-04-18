@@ -150,5 +150,36 @@ def RecursiveNegaMax(gameState,validMoves,depth,turnMultiplier):
                 nextMove = move
         gameState.undoMove()
     return maxScore
-    
-    
+
+def AlphaBetaPruningAI(gameState,validMoves):
+    global nextMove
+    nextMove = None
+    random.shuffle(validMoves)
+    RecursiveAlphaBetaPruning(gameState, validMoves,DEPTH,-CHECKMATE,CHECKMATE, (1 if gameState.whiteToMove else -1))
+    return nextMove
+
+def RecursiveAlphaBetaPruning(gameState,validMoves,depth,alpha,beta,turnMultiplier):
+    #alpha is max rn and beta is min score rn
+    global nextMove
+    if depth == 0:
+        return turnMultiplier * ScoreBoard(gameState)
+    # order moves - implement later for better efficiency
+    maxScore = -CHECKMATE # init with the worst possible value
+    for move in validMoves:
+        gameState.makeMove(move)
+        nextMoves = gameState.getValidMoves()
+        score = -1 *  RecursiveAlphaBetaPruning(gameState, nextMoves,
+                                                depth=depth - 1,
+                                                alpha=-beta,
+                                                beta=-alpha,
+                                                turnMultiplier=-1*turnMultiplier)
+        if score > maxScore:
+            maxScore = score
+            if depth == DEPTH:
+                nextMove = move
+        gameState.undoMove()
+        if maxScore > alpha:
+            alpha = maxScore
+        if alpha >=beta:
+            break
+    return maxScore
