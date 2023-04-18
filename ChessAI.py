@@ -13,10 +13,10 @@ pieceScore  = {
 CHECKMATE = 1000
 STALEMATE = 0
 DEPTH = 2
-TRANSPOSITIONAL_WEIGHT = 0.2
+POSITIONAL_WEIGHT = 0.2
 
-#TRANSPOSITIONAL TABLES RANGE(1-4) NEEEEDDD TO BE TUNED
-KTable = np.array  ([                                       #transpositional table for king
+#POSITIONAL TABLES RANGE(1-4) NEEEEDDD TO BE TUNED
+KTable = np.array  ([                                       #positional table for king
                         [3 , 3 , 2 , 1 , 1 , 2 , 3 , 3],
                         [2 , 2 , 1 , 1 , 1 , 1 , 2 , 2],
                         [1 , 0 , 0 , 0 , 0 , 0 , 0 , 1],
@@ -27,7 +27,7 @@ KTable = np.array  ([                                       #transpositional tab
                         [3 , 3 , 2 , 1 , 1 , 2 , 3 , 3],
                         ])
 
-QTable = np.array  ([                                       #transpositional table for queen
+QTable = np.array  ([                                       #positional table for queen
                         [0 , 1 , 1 , 1 , 1 , 1 , 1 , 0],
                         [1 , 2 , 2 , 2 , 2 , 2 , 2 , 1],
                         [1 , 3 , 3 , 3 , 3 , 3 , 2 , 1],
@@ -38,7 +38,7 @@ QTable = np.array  ([                                       #transpositional tab
                         [0 , 1 , 1 , 1 , 1 , 1 , 1 , 0],
                         ])
 
-RTable = np.array  ([                                       #transpositional table for rook
+RTable = np.array  ([                                       #positional table for rook
                         [1 , 0 , 1 , 1 , 1 , 1 , 0 , 1],
                         [1 , 4 , 4 , 4 , 4 , 4 , 4 , 1],
                         [1 , 2 , 3 , 3 , 3 , 3 , 2 , 1],
@@ -49,7 +49,7 @@ RTable = np.array  ([                                       #transpositional tab
                         [1 , 0 , 1 , 1 , 1 , 1 , 0 , 1],
                         ])
 
-BTable = np.array  ([                                       #transpositional table for bishop
+BTable = np.array  ([                                       #positional table for bishop
                         [0 , 1 , 1 , 1 , 1 , 1 , 1 , 0],
                         [1 , 3 , 2 , 2 , 2 , 2 , 3 , 1],
                         [1 , 4 , 4 , 4 , 4 , 4 , 4 , 1],
@@ -60,7 +60,7 @@ BTable = np.array  ([                                       #transpositional tab
                         [0 , 1 , 1 , 1 , 1 , 1 , 1 , 0],
                         ])
 
-NTable = np.array  ([                                       #transpositional table for knight
+NTable = np.array  ([                                       #positional table for knight
                         [0 , 1 , 1 , 1 , 1 , 1 , 1 , 0],
                         [1 , 2 , 2 , 2 , 2 , 2 , 2 , 1],
                         [1 , 2 , 3 , 3 , 3 , 3 , 2 , 1],
@@ -70,7 +70,7 @@ NTable = np.array  ([                                       #transpositional tab
                         [1 , 2 , 2 , 2 , 2 , 2 , 2 , 1],
                         [0 , 1 , 1 , 1 , 1 , 1 , 1 , 0],
                         ])
-PTable = np.array  ([                                       #transpositional table for pawn
+PTable = np.array  ([                                       #positional table for pawn
                         [1 , 1 , 1 , 1 , 1 , 1 , 1 , 1],
                         [1 , 2 , 2 , 1 , 1 , 2 , 2 , 1],
                         [1 , 2 , 3 , 3 , 3 , 3 , 2 , 1],
@@ -81,7 +81,7 @@ PTable = np.array  ([                                       #transpositional tab
                         [1 , 1 , 1 , 1 , 1 , 1 , 1 , 1],
                         ])
 
-transpositionalTableMap = {
+positionalTableMap = {
     "K": KTable,
     "Q": QTable,
     "R": RTable,
@@ -118,7 +118,7 @@ def ScoreBoard(gameState):
             piece = gameState.board[row][col]
             if piece !="--":
                 #transpositional score
-                positionScore = TRANSPOSITIONAL_WEIGHT * transpositionalTableMap[piece[1]][row][col]
+                positionScore = POSITIONAL_WEIGHT * positionalTableMap[piece[1]][row][col]
                 if piece[0]=="w":
                     score+= pieceScore[piece[1]] + positionScore
                 elif piece[0]=="b":
