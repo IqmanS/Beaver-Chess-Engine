@@ -107,7 +107,7 @@ def drawScoreMeter(screen,score):
         p.draw.rect(screen, GREY,p.Rect(WIDTH + 2 * INDENT +3, ((HEIGHT + INDENT * 2)// 2)-(HEIGHT - 2 * INDENT) * -score / 35 , 40, (HEIGHT - 2 * INDENT) * -score / 35))
 
 def main():
-    screen = p.display.set_mode((WIDTH*2+ 2* INDENT,HEIGHT + INDENT *2 ))
+    screen = p.display.set_mode((WIDTH+ 2* INDENT,HEIGHT + INDENT *2 ))
     clock = p.time.Clock()
     screen.fill(BG)
     gameState = GameState()
