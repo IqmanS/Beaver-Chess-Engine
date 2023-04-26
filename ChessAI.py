@@ -90,10 +90,6 @@ positionalTableMap = {
     "P": PTable
 }
 
-
-def RandomAI(validMoves):
-    return random.choice(validMoves)
-
 def ScoreMaterial(board):
     score = 0
     for row in board:
@@ -124,6 +120,10 @@ def ScoreBoard(gameState):
                 elif piece[0]=="b":
                     score-= pieceScore[piece[1]] + positionScore
     return score
+
+
+def RandomAI(validMoves):
+    return random.choice(validMoves)
 
 def GreedyAI(gameState,validMoves):
     turnSign = 1 if gameState.whiteToMove else -1

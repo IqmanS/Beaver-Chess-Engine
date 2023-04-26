@@ -10,7 +10,7 @@ p.init()
 p.display.set_caption('Beaver')
 FONT = p.font.Font('freesansbold.ttf', 10)
 HEADING = p.font.Font('freesansbold.ttf', 32)
-GAMEEND = p.font.Font('freesansbold.ttf', 25)
+GAMEEND = p.font.Font('freesansbold.ttf', 40)
 WIDTH = HEIGHT = 512
 DIMENSION = 8
 CELL_SIZE = HEIGHT// DIMENSION
@@ -45,7 +45,7 @@ def drawRanksAndFiles(screen):
     title = "BEAVER CHESS ENGINE"
     titleBox = HEADING.render(title,True,HEADINGCOL)
     titleBox.get_width()
-    screen.blit(titleBox, (WIDTH *1.1+ (2*INDENT), CELL_SIZE ))
+    screen.blit(titleBox, (WIDTH *1.15+ (2*INDENT), CELL_SIZE ))
     for i in range(DIMENSION):
         rank = str(DIMENSION-i)
         rankBox = FONT.render(rank, True, WHITE)
@@ -107,7 +107,7 @@ def drawScoreMeter(screen,score):
         p.draw.rect(screen, GREY,p.Rect(WIDTH + 2 * INDENT +3, ((HEIGHT + INDENT * 2)// 2)-(HEIGHT - 2 * INDENT) * -score / 35 , 40, (HEIGHT - 2 * INDENT) * -score / 35))
 
 def main():
-    screen = p.display.set_mode((WIDTH+ 2* INDENT,HEIGHT + INDENT *2 ))
+    screen = p.display.set_mode((WIDTH*2+ 2* INDENT,HEIGHT + INDENT *2 ))
     clock = p.time.Clock()
     screen.fill(BG)
     gameState = GameState()
@@ -179,7 +179,12 @@ def main():
             moveMade = False
                     
         drawGameState(screen, gameState,validMoves,sqSelected=lastSqSelected)
-        drawScoreMeter(screen,ScoreBoard(gameState))
+        score = ScoreBoard(gameState)
+        if score >= 0:
+            drawScoreMeter(screen,min(17.2,score))
+        else:
+            drawScoreMeter(screen, max(-17.2, score))
+        # drawScoreMeter(screen,ScoreBoard(gameState))
         
         if gameState.checkmate:
             gameOver = True
